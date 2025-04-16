@@ -1,3 +1,4 @@
+'use server'
 import { NextResponse } from 'next/server';
 import dbConnect from '@/lib/db';
 import { Budget } from '@/models/Budget';
