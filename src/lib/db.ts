@@ -1,4 +1,4 @@
-import mongoose from 'mongoose';
+import mongoose, { Mongoose } from 'mongoose';
 
 const MONGODB_URI = process.env.MONGODB_URI;
 
@@ -6,33 +6,41 @@ if (!MONGODB_URI) {
   throw new Error('Please define the MONGODB_URI environment variable');
 }
 
-// 👇 Extend the NodeJS global type
 declare global {
   // eslint-disable-next-line no-var
-  var mongoose: {
-    conn: typeof mongoose | null;
-    promise: Promise<typeof mongoose> | null;
-  } | undefined;
+  var _mongoose: {
+    conn: Mongoose | null;
+    promise: Promise<Mongoose> | null;
+  };
 }
 
-// 👇 Actual runtime global object initialization
-if (!global.mongoose) {
-  global.mongoose = { conn: null, promise: null };
+const globalWithMongoose = global as typeof globalThis & {
+  _mongoose: {
+    conn: Mongoose | null;
+    promise: Promise<Mongoose> | null;
+  };
+};
+
+if (!globalWithMongoose._mongoose) {
+  globalWithMongoose._mongoose = {
+    conn: null,
+    promise: null,
+  };
 }
 
-let cached = global.mongoose;
-
-async function dbConnect() {
-  if (cached.conn) {
-    return cached.conn;
+async function dbConnect(): Promise<Mongoose> {
+  if (globalWithMongoose._mongoose.conn) {
+    return globalWithMongoose._mongoose.conn;
   }
 
-  if (!cached.promise) {
-    cached.promise = mongoose.connect(MONGODB_URI);
+  if (!globalWithMongoose._mongoose.promise) {
+    globalWithMongoose._mongoose.promise = mongoose.connect(MONGODB_URI as string, {
+      bufferCommands: false,
+    });
   }
 
-  cached.conn = await cached.promise;
-  return cached.conn;
+  globalWithMongoose._mongoose.conn = await globalWithMongoose._mongoose.promise;
+  return globalWithMongoose._mongoose.conn;
 }
 
 export default dbConnect;

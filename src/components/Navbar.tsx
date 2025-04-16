@@ -17,13 +17,26 @@ export default function Navbar() {
             href="/" 
             className={`${pathname === '/' ? 'text-blue-400' : 'hover:text-blue-400'}`}
           >
-            TransactionForm
+            Transaction Form
           </Link>
+          <Link 
+            href="/dashboard" 
+            className={`${pathname === '/dashboard' ? 'text-blue-400' : 'hover:text-blue-400'}`}
+          >
+            Dashboard
+          </Link>
+          <Link 
+            href="/budgets" 
+            className={`${pathname === '/budgets' ? 'text-blue-400' : 'hover:text-blue-400'}`}
+          >
+            Budget Management
+          </Link>
+          
           <Link 
             href="/transactions" 
             className={`${pathname === '/transactions' ? 'text-blue-400' : 'hover:text-blue-400'}`}
           >
-            View Transactions
+            Transactions
           </Link>
           <Link 
             href="/expenses" 

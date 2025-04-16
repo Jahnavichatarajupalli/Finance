@@ -2,88 +2,138 @@
 
 import { useState } from 'react';
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
-interface TransactionFormProps {
-  onSuccess: () => void;
-}
-
-export default function TransactionForm({ onSuccess }: TransactionFormProps) {
+export default function TransactionForm() {  // Remove the onSubmit prop
   const [formData, setFormData] = useState({
-    amount: '',
     description: '',
-    date: new Date().toISOString().split('T')[0]
+    amount: '',
+    date: new Date().toISOString().split('T')[0],
+    category: ''
   });
+
+  const [type, setType] = useState('debit');
+
+  const categories = [
+    'Food & Dining',
+    'Shopping',
+    'Transportation',
+    'Bills & Utilities',
+    'Entertainment',
+    'Healthcare',
+    'Education',
+    'Income',
+    'Other'
+  ];
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
       const response = await fetch('/api/transactions', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          ...formData,
-          amount: parseFloat(formData.amount)
+          description: formData.description,
+          amount: Number(formData.amount),
+          category: formData.category,
+          date: formData.date,
+          type
         }),
       });
 
-      if (!response.ok) throw new Error('Failed to create transaction');
+      if (!response.ok) throw new Error('Failed to add transaction');
       
       setFormData({
-        amount: '',
         description: '',
-        date: new Date().toISOString().split('T')[0]
+        amount: '',
+        date: new Date().toISOString().split('T')[0],
+        category: ''
       });
-      onSuccess();
+      
+      // Redirect to transactions page after successful submission
+      window.location.href = '/transactions';
     } catch (error) {
-      console.error('Error creating transaction:', error);
+      console.error('Failed to add transaction:', error);
     }
   };
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
-      <h2 className="text-xl font-semibold mb-4">Add Transaction</h2>
-      
-      <div className="space-y-2">
-        <Label htmlFor="amount">Amount</Label>
-        <Input
-          id="amount"
-          type="number"
-          step="0.01"
-          required
-          value={formData.amount}
-          onChange={(e) => setFormData({ ...formData, amount: e.target.value })}
-          placeholder="Enter amount"
-        />
-      </div>
-
-      <div className="space-y-2">
-        <Label htmlFor="description">Description</Label>
-        <Input
-          id="description"
+      <div>
+        <label className="block text-sm font-medium mb-1">Description</label>
+        <input
           type="text"
-          required
           value={formData.description}
           onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-          placeholder="Enter description"
+          className="w-full p-2 border rounded"
+          required
         />
       </div>
 
-      <div className="space-y-2">
-        <Label htmlFor="date">Date</Label>
-        <Input
-          id="date"
-          type="date"
+      <div>
+        <label className="block text-sm font-medium mb-1">Amount</label>
+        <input
+          type="number"
+          value={formData.amount}
+          onChange={(e) => setFormData({ ...formData, amount: e.target.value })}
+          className="w-full p-2 border rounded"
           required
+          step="0.01"
+        />
+      </div>
+
+      <div>
+        <label className="block text-sm font-medium mb-1">Category</label>
+        <Select
+          value={formData.category}
+          onValueChange={(value) => setFormData({ ...formData, category: value })}
+        >
+          <SelectTrigger className="w-full">
+            <SelectValue placeholder="Select a category" />
+          </SelectTrigger>
+          <SelectContent>
+            {categories.map((category) => (
+              <SelectItem key={category} value={category}>
+                {category}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
+
+      <div>
+        <label className="block text-sm font-medium mb-1">Date</label>
+        <input
+          type="date"
           value={formData.date}
           onChange={(e) => setFormData({ ...formData, date: e.target.value })}
+          className="w-full p-2 border rounded"
+          required
         />
       </div>
 
-      <Button type="submit" className="w-full">Add Transaction</Button>
+      <div>
+        <label className="block mb-2">Transaction Type</label>
+        <Select value={type} onValueChange={setType}>
+          <SelectTrigger>
+            <SelectValue placeholder="Select type" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="debit">Debit (Expense)</SelectItem>
+            <SelectItem value="credit">Credit (Income)</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+
+      <Button type="submit" className="w-full">
+        Add Transaction
+      </Button>
     </form>
   );
 }

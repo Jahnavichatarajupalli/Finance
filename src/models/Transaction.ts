@@ -13,7 +13,24 @@ const TransactionSchema = new mongoose.Schema({
     type: Date,
     required: true,
     default: Date.now
-  }
+  },
+  category: {
+    type: String,
+    required: true,
+    enum: [
+      'Food & Dining',
+      'Shopping',
+      'Transportation',
+      'Bills & Utilities',
+      'Entertainment',
+      'Healthcare',
+      'Education',
+      'Income',
+      'Other'
+    ]
+  },
+  type: { type: String, required: true, enum: ['debit', 'credit'] }
+
 }, {
   timestamps: true
 });

@@ -29,7 +29,8 @@ export default function TransactionList({ transactions, onTransactionUpdate }: T
   const [editForm, setEditForm] = useState({
     description: '',
     amount: 0,
-    date: ''
+    date: '',
+    
   });
 
   const handleEdit = (transaction: Transaction) => {
@@ -80,6 +81,7 @@ export default function TransactionList({ transactions, onTransactionUpdate }: T
           <TableRow>
             <TableHead>Date</TableHead>
             <TableHead>Description</TableHead>
+            {/* <TableHead>Category</TableHead> */}
             <TableHead>Amount</TableHead>
             <TableHead>Actions</TableHead>
           </TableRow>
@@ -111,6 +113,18 @@ export default function TransactionList({ transactions, onTransactionUpdate }: T
                   transaction.description
                 )}
               </TableCell>
+              {/* <TableCell>
+                {editingId === transaction._id ? (
+                  <input
+                    type="text"
+                    value={editForm.category}
+                    onChange={(e) => setEditForm({ ...editForm, category: e.target.value })}
+                    className="border p-1 rounded"
+                  />
+                ) : (
+                  transaction.category
+                )}
+              </TableCell> */}
               <TableCell className={transaction.amount < 0 ? 'text-red-500' : 'text-green-500'}>
                 {editingId === transaction._id ? (
                   <input
