@@ -5,7 +5,6 @@ const nextConfig = {
       bodySizeLimit: '2mb'
     }
   },
-  serverExternalPackages: ['mongoose'],
   typescript: {
     ignoreBuildErrors: true,
   },
@@ -15,7 +14,14 @@ const nextConfig = {
   output: 'standalone',
   images: {
     unoptimized: true,
-  }
+  },
+  // Add basePath and assetPrefix for proper route handling
+  basePath: '',
+  assetPrefix: '',
+  // Ensure proper route generation
+  pageExtensions: ['js', 'jsx', 'ts', 'tsx'],
+  generateEtags: true,
+  poweredByHeader: true,
 };
 
 module.exports = nextConfig
