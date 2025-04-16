@@ -8,6 +8,7 @@ interface DashboardProps {
 }
 
 export default function Dashboard({ transactions }: DashboardProps) {
+  console.log(transactions)
   // const totalIncome = transactions.filter(t=>t.amount>0 && t.type==='credit').reduce((sum,t)=>sum+t.amount,0);
   // const totalExpenses = transactions
   //   .filter(t => t.amount < 0)
