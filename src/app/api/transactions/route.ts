@@ -6,7 +6,7 @@ import { Transaction } from '@/models/Transaction';
 
 export async function GET() {
   try {
-    await dbConnect();
+    await dbConnect().then(()=>{console.log("db connected successfully")})
     const transactions = await Transaction.find({}).sort({ date: -1 });
     return NextResponse.json(transactions);
   } catch (error) {
